@@ -12,7 +12,6 @@ export default function ChosenTask({ route, navigation  }:Props) {
     console.log('aaaaaaaaaaa> ' , code)
     return (
         <View style={styles.screen}>
-            <Header />
             <View style={styles.body}>
                 <Text>{code}</Text>
             </View>

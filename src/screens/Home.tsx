@@ -10,7 +10,7 @@ import { Button, Text, TextInput } from "@react-native-material/core";
 import { saveTodo, setTodos } from '../features/todoReducer';
 import Footer from '../Components/Footer';
 
-export default function Home({ navigation, GlobalState }: Props) {
+export default function Home({ navigation }: Props) {
     const tasks = useSelector((state: RootState) => state.todoList.todoList)
     const dispatch = useDispatch();
     const [task, setTask] = useState('');
