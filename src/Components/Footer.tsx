@@ -3,20 +3,21 @@ import { useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from "react-redux";
-import { setTodos } from "../features/todoReducer";
+import { setUsers } from "../features/userReducer";
 import { Props } from "../types";
 
 export default function Footer({ navigation }:Props) {
     const dispatch = useDispatch();
 
     useEffect(() => {        
-        axios.get(`https://demo5354080.mockable.io/tasks`)
+        console.log('Data Fetch again')
+        axios.get(`https://api-generator.retool.com/1tdqbQ/user`)
             .then((res )=> {
-                console.log('data from API  >> ' , res.data)
-                const persons = res.data;
-                dispatch(setTodos(persons))
+                // console.log('data from API  >> ' , res.data)
+                const users = res.data;
+                dispatch(setUsers(users))
             }).catch(err => {
-                console.log(err)
+                console.log("Error >> " , err)
             })
     }, [])
 

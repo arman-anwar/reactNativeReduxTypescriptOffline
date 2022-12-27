@@ -4,4 +4,4 @@ export type Props = {
     route?:any;
 }
 
-export interface Task { id: number, code: string }
+export interface User { id: number, name: string, email?:string }

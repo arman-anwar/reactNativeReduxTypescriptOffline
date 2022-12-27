@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Task } from '../types';
+import { User } from '../types';
 
 const initialState = {
-    todoList: [] as Task[]
+    todoLists: [] as User[]
 }
 
 const todoSlice = createSlice({
@@ -10,20 +10,23 @@ const todoSlice = createSlice({
     initialState,
     reducers: {
         saveTodo: (state, action) => {
-            let test: Task = action.payload
-            state.todoList.push(test)
+            let test: User = action.payload
+            state.todoLists.push(test)
         },
         setTodos: (state, action) => {
-            state.todoList = [...action.payload]
+            state.todoLists = [...action.payload]
         },
         updateTodo: (state, action) => {
             let test = action.payload
-            let objIndex = state.todoList.findIndex((obj => obj.id == test.id));
-            // state.todoList[objIndex].task = test.description
+            let objIndex = state.todoLists.findIndex((obj => obj.id == test.id));
+            state.todoLists[objIndex].name = test.name
+            state.todoLists[objIndex].email = test.email
+
+            // return { state, todoList: [...state.todoLists] }
         },
         delTodo: (state, action) => {
-            let filtered = state.todoList.filter(ele => { return ele.id !== action.payload });
-            return { state, todoList: [...filtered] }
+            let filtered = state.todoLists.filter(ele => { return ele.id !== action.payload });
+            return { state, todoLists: [...filtered] }
         }
     }
 });

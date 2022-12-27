@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, ListRenderItem, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Header from '../Components/Header';
-import { Props, Task } from '../types';
-// import { saveTodo, setTodos } from '../features/todoReducer';
+import { Props, User } from '../types';
 import { useSelector } from 'react-redux'
 import { RootState } from '../features/store';
 import { Button, Text, TextInput } from "@react-native-material/core";
-import { saveTodo, setTodos } from '../features/todoReducer';
 import Footer from '../Components/Footer';
+import { saveUser } from '../features/userReducer';
 
 export default function Home({ navigation }: Props) {
-    const tasks = useSelector((state: RootState) => state.todoList.todoList)
+    const usersList = useSelector((state: RootState) => state.userList.userList)
     const dispatch = useDispatch();
-    const [task, setTask] = useState('');
+    const [userName, setUserName] = useState('');
 
     const renderItem = (data: any) => {
         return (
@@ -21,18 +20,18 @@ export default function Home({ navigation }: Props) {
                 style={styles.task}
                 onPress={() => handleChooseTask(data.item)}
             >
-                <Text>{data.item.code}</Text>
+                <Text>{data.item.id + ' - ' +  data.item.name} </Text>
             </TouchableOpacity>
         )
     }
     const handleSaveTask = () => {
-        const index = tasks.length + 1;
-        let taska: Task = { id: index, code: task }
-        dispatch(saveTodo(taska))
-        setTask('');
+        const index = usersList.length + 1;
+        let taska: User = { id: index, name: userName }
+        dispatch(saveUser(taska))
+        setUserName('');
     }
 
-    const handleChooseTask = (task: Task) => {
+    const handleChooseTask = (task: User) => {
         navigation.navigate('ChosenTask', task);
     }
 
@@ -42,9 +41,9 @@ export default function Home({ navigation }: Props) {
             <View style={styles.body}>
                 <TextInput
                     style={styles.input}
-                    onChangeText={setTask}
-                    value={task}
-                    placeholder="To do task..."
+                    onChangeText={setUserName}
+                    value={userName}
+                    placeholder="User Name..."
                 />
                 <TouchableOpacity
                     style={styles.button}
@@ -53,7 +52,7 @@ export default function Home({ navigation }: Props) {
                     <Text style={styles.buttonText} >Submit</Text>
                 </TouchableOpacity>
                 <FlatList
-                    data={tasks}
+                    data={usersList}
                     renderItem={renderItem}
                     keyExtractor={x => x.id + ''}
                 />
