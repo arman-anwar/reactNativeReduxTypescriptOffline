@@ -10,7 +10,7 @@ import Footer from '../Components/Footer';
 import { saveUser } from '../features/userReducer';
 
 export default function Home({ navigation }: Props) {
-    const usersList = useSelector((state: RootState) => state.userList.userList)
+    const usersList = useSelector((state: RootState) => state.users.userList)
     const dispatch = useDispatch();
     const [userName, setUserName] = useState('');
 

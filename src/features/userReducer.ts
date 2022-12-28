@@ -2,22 +2,24 @@ import { createSlice } from '@reduxjs/toolkit'
 import { User } from '../types';
 
 const initialState = {
-    userList: [] as User[]
+    userList: [] as User[],
+    isLoading: false
 }
 
 const userSlice = createSlice({
-    name: 'user',
+    name: 'users',
     initialState,
     reducers: {
+        getUsersFetch: (state) => {
+            state.isLoading = true
+        },
         saveUser: (state, action) => {
             let user: User = action.payload
-            // state.userList.push(test)
-
-            return { state, userList: [...state.userList, user] }
+            state.userList.push(user)
         },
-        setUsers: (state, action) => {
-            let users = [...action.payload]
-            return { state, userList: [...users] }
+        getUsersSuccess: (state, action) => {
+            state.userList = action.payload
+            state.isLoading = false;
         },
         updateUser: (state, action) => {
             let test = action.payload
@@ -25,17 +27,15 @@ const userSlice = createSlice({
             let objIndex = users.findIndex((obj => obj.id == test.id));
             users[objIndex].name = test.name
             users[objIndex].email = test.email
-            Object.assign(state.userList,users);
-
-            // return { state, userList: [...users] }
+            Object.assign(state.userList, users);
         },
         delUser: (state, action) => {
             let filtered = state.userList.filter(ele => { return ele.id !== action.payload });
-            return { state, userList: [...filtered] }
+            Object.assign(state.userList, filtered);
         }
     }
 });
 
-export const { saveUser, delUser, updateUser, setUsers } = userSlice.actions
+export const { saveUser, delUser, updateUser, getUsersSuccess, getUsersFetch } = userSlice.actions
 
 export default userSlice.reducer

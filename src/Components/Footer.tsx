@@ -3,22 +3,14 @@ import { useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from "react-redux";
-import { setUsers } from "../features/userReducer";
+import { getUsersFetch } from "../features/userReducer";
 import { Props } from "../types";
 
 export default function Footer({ navigation }:Props) {
     const dispatch = useDispatch();
 
     useEffect(() => {        
-        console.log('Data Fetch again')
-        axios.get(`https://api-generator.retool.com/1tdqbQ/user`)
-            .then((res )=> {
-                // console.log('data from API  >> ' , res.data)
-                const users = res.data;
-                dispatch(setUsers(users))
-            }).catch(err => {
-                console.log("Error >> " , err)
-            })
+        dispatch(getUsersFetch())
     }, [])
 
     return (

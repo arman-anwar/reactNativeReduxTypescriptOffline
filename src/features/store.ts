@@ -2,13 +2,17 @@ import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/t
 import todoReducer from './todoReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import thunk from 'redux-thunk';
 import userReducer from './userReducer';
+import createSagaMiddleware from 'redux-saga'
+import saga from './saga'
 
 const rootReducer = combineReducers({
   todoList: todoReducer,
-  userList: userReducer,
+  users: userReducer,
 })
+
+const sagaMiddleware = createSagaMiddleware()
+
 
 const persistConfig = {
   key: 'root',
@@ -19,16 +23,17 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: [thunk]
+  middleware: () => [sagaMiddleware]
 })
 
+sagaMiddleware.run(saga)
 export const persistor = persistStore(store)
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
+// export type AppThunk<ReturnType = void> = ThunkAction<
+//   ReturnType,
+//   RootState,
+//   unknown,
+//   Action<string>
+// >;
