@@ -3,19 +3,19 @@ import { useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from "react-redux";
-import { getUsersFetch } from "../features/userReducer";
+import { GET_USERS } from "../features/types";
 import { Props } from "../types";
 
-export default function Footer({ navigation }:Props) {
+export default function Footer({ navigation }: Props) {
     const dispatch = useDispatch();
 
-    useEffect(() => {        
-        dispatch(getUsersFetch())
+    useEffect(() => {
+        dispatch({ type: GET_USERS })
     }, [])
 
     return (
         <View style={styles.footer}>
-            <Icon 
+            <Icon
                 name="home"
                 size={30}
                 color="#141414"

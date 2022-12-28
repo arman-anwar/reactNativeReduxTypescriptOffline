@@ -7,7 +7,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../features/store';
 import { Button, Text, TextInput } from "@react-native-material/core";
 import Footer from '../Components/Footer';
-import { saveUser } from '../features/userReducer';
+import { createUser } from '../features/slice/userReducer';
+import { CREATE_USER } from '../features/types';
 
 export default function Home({ navigation }: Props) {
     const usersList = useSelector((state: RootState) => state.users.userList)
@@ -20,14 +21,12 @@ export default function Home({ navigation }: Props) {
                 style={styles.task}
                 onPress={() => handleChooseTask(data.item)}
             >
-                <Text>{data.item.id + ' - ' +  data.item.name} </Text>
+                <Text>{data.item.id + ' - ' + data.item.name} </Text>
             </TouchableOpacity>
         )
     }
     const handleSaveTask = () => {
-        const index = usersList.length + 1;
-        let taska: User = { id: index, name: userName }
-        dispatch(saveUser(taska))
+        dispatch({ type: CREATE_USER, payload: { name: userName } })
         setUserName('');
     }
 

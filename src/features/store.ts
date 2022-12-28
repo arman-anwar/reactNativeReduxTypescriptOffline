@@ -1,10 +1,10 @@
 import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
-import todoReducer from './todoReducer';
+import todoReducer from './slice/todoReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import userReducer from './userReducer';
+import userReducer from './slice/userReducer';
 import createSagaMiddleware from 'redux-saga'
-import saga from './saga'
+import saga from './saga/saga'
 
 const rootReducer = combineReducers({
   todoList: todoReducer,

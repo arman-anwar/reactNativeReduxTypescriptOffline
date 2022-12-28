@@ -1,25 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { User } from '../types';
+import { User } from '../../types';
 
 const initialState = {
     userList: [] as User[],
-    isLoading: false
+    // isLoading: false
 }
 
 const userSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        getUsersFetch: (state) => {
-            state.isLoading = true
-        },
-        saveUser: (state, action) => {
+        createUser: (state, action) => {
             let user: User = action.payload
             state.userList.push(user)
         },
         getUsersSuccess: (state, action) => {
             state.userList = action.payload
-            state.isLoading = false;
         },
         updateUser: (state, action) => {
             let test = action.payload
@@ -36,6 +32,6 @@ const userSlice = createSlice({
     }
 });
 
-export const { saveUser, delUser, updateUser, getUsersSuccess, getUsersFetch } = userSlice.actions
+export const { createUser, delUser, updateUser, getUsersSuccess } = userSlice.actions
 
 export default userSlice.reducer

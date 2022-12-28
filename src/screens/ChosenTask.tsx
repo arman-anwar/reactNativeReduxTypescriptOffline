@@ -8,7 +8,8 @@ import { Props, User } from '../types';
 // import { saveTodo, setTodos, updateTodo } from '../features/todoReducer';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { delUser, updateUser } from '../features/userReducer';
+import { delUser, updateUser } from '../features/slice/userReducer';
+import { DELETE_USER_BY_ID, UPDATE_USER_BY_ID } from '../features/types';
 
 export default function ChosenTask({ route, navigation }: Props) {
     const { name, id, email } = route.params;
@@ -24,35 +25,14 @@ export default function ChosenTask({ route, navigation }: Props) {
     }, [])
 
     const handleSaveTask = () => {
-        // const index = tasks.length + 1;
         let user: User = { id, name: userName, email: userEmail }
-        // dispatch(saveTodo(taska))
-        // setTask('');
-
-        axios.put(`https://api-generator.retool.com/1tdqbQ/user/${id}`, { name: userName, email: userEmail })
-            .then((res) => {
-                console.log('User Updated API  >> ', res.data)
-                // const persons = res.data;
-                dispatch(updateUser(user))
-                navigation.goBack();
-            }).catch(err => {
-                console.log("Error >> ---", err)
-            })
-
+        dispatch({ type: UPDATE_USER_BY_ID, payload: user })
     }
 
-
     const handleDelUser = () => {
-        axios.delete(`https://api-generator.retool.com/1tdqbQ/user/${id}`)
-            .then((res) => {
-                console.log('User Delete API  >> ', res.data)
-                // const persons = res.data;
-                dispatch(delUser(id))
-                navigation.goBack();
-            }).catch(err => {
-                console.log("Error >> ---", err)
-            })
 
+        dispatch({ type: DELETE_USER_BY_ID, payload: { id } })
+        navigation.goBack();
     }
 
     return (
