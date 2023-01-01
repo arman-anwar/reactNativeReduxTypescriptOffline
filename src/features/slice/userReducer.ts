@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+// import { Value } from 'react-native-reanimated';
 import { User } from '../../types';
 
 const initialState = {
@@ -10,9 +11,16 @@ const userSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        createUser: (state, action) => {
-            let user: User = action.payload
-            state.userList.push(user)
+        createUser: {
+            reducer: (state, action) => {
+                // console.log('action' , action)
+                state.userList.push(action.payload)
+
+            },
+            prepare: (value) => {
+                // console.log('prepare payload', value)
+                return { payload: { ...value } }
+            }
         },
         getUsersSuccess: (state, action) => {
             state.userList = action.payload
