@@ -8,7 +8,6 @@ import { RootState } from '../features/store';
 import { Button, Text, TextInput } from "@react-native-material/core";
 import Footer from '../Components/Footer';
 import { createUser } from '../features/slice/userReducer';
-import { CREATE_USER } from '../features/types';
 
 export default function Home({ navigation }: Props) {
     const usersList = useSelector((state: RootState) => state.users.userList)
@@ -26,7 +25,7 @@ export default function Home({ navigation }: Props) {
         )
     }
     const handleSaveTask = () => {
-        dispatch({ type: CREATE_USER, payload: { name: userName } })
+        dispatch(createUser({ name: userName }) )
         setUserName('');
     }
 
@@ -51,9 +50,9 @@ export default function Home({ navigation }: Props) {
                     <Text style={styles.buttonText} >Submit</Text>
                 </TouchableOpacity>
                 <FlatList
-                    data={usersList}
+                    data={[...usersList]}
                     renderItem={renderItem}
-                    keyExtractor={x => x.id + ''}
+                    keyExtractor={(item, index)=> index.toString()}
                 />
             </View>
             <Footer navigation={navigation} />

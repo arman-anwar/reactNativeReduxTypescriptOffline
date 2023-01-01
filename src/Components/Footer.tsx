@@ -3,14 +3,13 @@ import { useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from "react-redux";
-import { GET_USERS } from "../features/types";
 import { Props } from "../types";
 
 export default function Footer({ navigation }: Props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch({ type: GET_USERS })
+        dispatch({ type: 'users/getUsersFetch' })
     }, [])
 
     return (

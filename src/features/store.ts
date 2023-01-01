@@ -7,7 +7,7 @@ import createSagaMiddleware from 'redux-saga'
 import saga from './saga/saga'
 
 const rootReducer = combineReducers({
-  todoList: todoReducer,
+  // todoList: todoReducer,
   users: userReducer,
 })
 
@@ -23,6 +23,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,
+  // middleware: (getDefaullMiddleware) => getDefaullMiddleware({ thunk: false }).concat(sagaMiddleware)
   middleware: () => [sagaMiddleware]
 })
 

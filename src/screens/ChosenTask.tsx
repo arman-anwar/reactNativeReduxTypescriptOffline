@@ -9,7 +9,6 @@ import { Props, User } from '../types';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { delUser, updateUser } from '../features/slice/userReducer';
-import { DELETE_USER_BY_ID, UPDATE_USER_BY_ID } from '../features/types';
 
 export default function ChosenTask({ route, navigation }: Props) {
     const { name, id, email } = route.params;
@@ -26,12 +25,13 @@ export default function ChosenTask({ route, navigation }: Props) {
 
     const handleSaveTask = () => {
         let user: User = { id, name: userName, email: userEmail }
-        dispatch({ type: UPDATE_USER_BY_ID, payload: user })
+        dispatch(updateUser(user))
+
     }
 
     const handleDelUser = () => {
 
-        dispatch({ type: DELETE_USER_BY_ID, payload: { id } })
+        dispatch(delUser(id))
         navigation.goBack();
     }
 
