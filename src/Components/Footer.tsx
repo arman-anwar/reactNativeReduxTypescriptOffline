@@ -9,7 +9,7 @@ export default function Footer({ navigation }: Props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch({ type: 'users/getUsersFetch' })
+        dispatch({ type: 'users/getUsersRequest' })
     }, [])
 
     return (

@@ -1,40 +1,72 @@
-import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
-import todoReducer from './slice/todoReducer';
-import { persistStore, persistReducer } from 'redux-persist';
+import {
+  configureStore,
+  getDefaultMiddleware,
+  combineReducers,
+} from '@reduxjs/toolkit';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userReducer from './slice/userReducer';
 import createSagaMiddleware from 'redux-saga'
 import saga from './saga/saga'
+import { reducer as network } from 'react-native-offline';
+import createOfflineMiddleware from './offlineMiddleware';
+import TYPES from './types';
 
-const rootReducer = combineReducers({
-  // todoList: todoReducer,
-  users: userReducer,
-})
+const sagaMiddleware = createSagaMiddleware();
 
-const sagaMiddleware = createSagaMiddleware()
 
+// console.log('postReducer>> ' , postReducer.reducer)
+const {
+  handleOfflineActionsMiddleware,
+  networkMiddleware,
+} = createOfflineMiddleware({
+  actionTypes: [
+    TYPES.DEL_USERS_REQUEST,
+    TYPES.CREATE_USERS_REQUEST,
+    'users/updateUserRequest'
+  ],
+});
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage
-}
+  version: 2,
+  storage: AsyncStorage,
+};
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const reducer = combineReducers({
+  users: userReducer,
+  network,
+});
 
-export const store = configureStore({
+const persistedReducer = persistReducer(persistConfig, reducer);
+
+const store = configureStore({
   reducer: persistedReducer,
-  // middleware: (getDefaullMiddleware) => getDefaullMiddleware({ thunk: false }).concat(sagaMiddleware)
-  middleware: () => [sagaMiddleware]
-})
+  middleware: [
+    handleOfflineActionsMiddleware,
+    networkMiddleware,
+    sagaMiddleware,
+    ...getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+  ],
+});
 
 sagaMiddleware.run(saga)
-export const persistor = persistStore(store)
 
-export type AppDispatch = typeof store.dispatch;
+const persistor = persistStore(store);
+
+export { persistor, store };
+
 export type RootState = ReturnType<typeof store.getState>;
-// export type AppThunk<ReturnType = void> = ThunkAction<
-//   ReturnType,
-//   RootState,
-//   unknown,
-//   Action<string>
-// >;

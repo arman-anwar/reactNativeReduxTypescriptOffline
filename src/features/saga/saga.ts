@@ -1,17 +1,18 @@
-import { call, takeEvery, put } from "redux-saga/effects";
+import { call, takeEvery, put, all, fork } from "redux-saga/effects";
 import Axios from "axios";
-import { createUserSucess, delUserSuccess, getUsersSuccess, updateUserSuccess } from "../slice/userReducer";
-
-let callAPI = async (config: { url: string, method?: string, data?: any }) => {
-    return await Axios(config);
-};
+import { createUserFailure, createUserSucess, delUserSuccess, getUsersSuccess, updateUserFailure, updateUserSuccess } from "../slice/userReducer";
+import { createUserAPI, deleteUserAPI, fetchUserAPI, updateUserAPI } from "../../services/APIService";
+import { networkSaga } from 'react-native-offline';
+import {
+    handleMetaNavigation,
+} from '../../services/utils';
 
 function* fetchUsersSaga() {
     try {
-        let result = yield call(() =>
-            callAPI({ url: "https://api-generator.retool.com/1tdqbQ/user" })
-        );
-        yield put(getUsersSuccess(result.data));
+        const response = yield call(fetchUserAPI);
+
+        yield put(getUsersSuccess(response.data));
+
     } catch (e) {
         console.error("Error fetch >>>>>> ", e)
         yield put({ type: "USERS_FETCH_FAILED" });
@@ -19,41 +20,55 @@ function* fetchUsersSaga() {
 }
 
 function* createUsersSaga(action) {
-    console.log('action createUsersSaga >> ', action)
     try {
-        let result = yield call(() =>
-            callAPI({ url: "https://api-generator.retool.com/1tdqbQ/user", method: 'POST', data: action.payload })
-        );
-        yield put(createUserSucess(result.data));
+        const { name, email, id } = action.payload;
+        const result = yield call(createUserAPI, { name, email });
+        const code = result.status;
+        if (code === 201) {
+            yield put(createUserSucess({
+                user: result.data,
+                offlineId: id < 0 ? id : null,
+                queued: action.meta.queued
+            }));
+
+            return handleMetaNavigation(action.meta);
+        }
+        console.log('failure createUsersSaga >>', result.data);
+        yield put(createUserFailure());
     } catch (e) {
         console.error("Error createUsersSaga >>>>>> ", e)
-        yield put({ type: "TODO_FETCH_FAILED" });
+        yield put(createUserFailure());
     }
 }
 
 function* updateUsersSaga(action) {
-    console.log('updateUsersSaga started', action)
+    console.log('updateUsersSaga 22222222', action)
 
     try {
-        let result = yield call(() =>
-            callAPI({ url: `https://api-generator.retool.com/1tdqbQ/user/${action.payload.id}`, method: 'PUT', data: action.payload })
-        );
-        console.log('updateUsersSaga completed')
-        yield put(updateUserSuccess(result.data));
-    } catch (e) {
-        console.error("Error updateUsersSaga >>>>>> ", e)
-        yield put({ type: "TODO_FETCH_FAILED" });
+        const response = yield call(updateUserAPI, action.payload);
+        const code = response.status;
+        if (code === 200) {
+            yield put(updateUserSuccess(response.data));
+            return handleMetaNavigation(action.meta);
+        }
+        yield put(updateUserFailure());
+        yield put(updateUserSuccess(response.data));
+    } catch (err) {
+        console.error("Error updateUsersSaga >>>>>>", err)
+        // console.log(err.message);
+        yield put(updateUserFailure());
     }
 }
 
 
 function* deleteUsersSaga(action) {
     try {
-        let result = yield call(() =>
-            callAPI({ url: `https://api-generator.retool.com/1tdqbQ/user/${action.payload}`, method: 'DELETE' })
-        );
+        const result = yield call(deleteUserAPI, action.payload);
+        const code = result.status;
+
         if (result.status === 200) {
             yield put(delUserSuccess(action.payload));
+            return handleMetaNavigation(action.meta);
         } else {
             console.log('deleted error > ', result.status)
             yield put({ type: "TODO_FETCH_FAILED" });
@@ -65,10 +80,15 @@ function* deleteUsersSaga(action) {
 }
 
 function* rootSaga() {
-    yield takeEvery('users/getUsersFetch', fetchUsersSaga);
-    yield takeEvery('users/createUser', createUsersSaga);
-    yield takeEvery('users/updateUser', updateUsersSaga);
-    yield takeEvery('users/delUser', deleteUsersSaga);
+    yield all([
+
+        yield takeEvery('users/getUsersRequest', fetchUsersSaga),
+        yield takeEvery('users/createUserRequest', createUsersSaga),
+        yield takeEvery('users/updateUserRequest', updateUsersSaga),
+        yield takeEvery('users/delUser', deleteUsersSaga),
+        fork(networkSaga),
+    ]);
+
 
 }
 

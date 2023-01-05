@@ -4,10 +4,10 @@ import { useDispatch } from 'react-redux';
 import Header from '../Components/Header';
 import { Props, User } from '../types';
 import { useSelector } from 'react-redux'
-import { RootState } from '../features/store';
 import { Button, Text, TextInput } from "@react-native-material/core";
 import Footer from '../Components/Footer';
-import { createUser } from '../features/slice/userReducer';
+import {  createUserRequest } from '../features/slice/userReducer';
+import { RootState } from '../features/store';
 
 export default function Home({ navigation }: Props) {
     const usersList = useSelector((state: RootState) => state.users.userList)
@@ -25,7 +25,7 @@ export default function Home({ navigation }: Props) {
         )
     }
     const handleSaveTask = () => {
-        dispatch(createUser({ name: userName }) )
+        dispatch(createUserRequest({ name: userName }) )
         setUserName('');
     }
 
